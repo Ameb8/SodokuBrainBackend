@@ -1,7 +1,5 @@
-package com.example.SodokuBrainBackend.controller;
+package com.example.SodokuBrainBackend.Users;
 
-import com.example.SodokuBrainBackend.model.Users;
-import com.example.SodokuBrainBackend.service.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

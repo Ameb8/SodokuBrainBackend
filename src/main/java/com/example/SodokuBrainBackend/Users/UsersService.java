@@ -1,8 +1,8 @@
-package com.example.SodokuBrainBackend.service;
+package com.example.SodokuBrainBackend.Users;
 
 
-import com.example.SodokuBrainBackend.model.Users;
-import com.example.SodokuBrainBackend.repository.UsersRepository;
+import com.example.SodokuBrainBackend.Users.Users;
+import com.example.SodokuBrainBackend.Users.UsersRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

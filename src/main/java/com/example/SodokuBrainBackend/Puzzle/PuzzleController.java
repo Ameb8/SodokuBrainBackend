@@ -1,7 +1,7 @@
-package com.example.SodokuBrainBackend.controller;
+package com.example.SodokuBrainBackend.Puzzle;
 
-import com.example.SodokuBrainBackend.model.Puzzle;
-import com.example.SodokuBrainBackend.service.PuzzleService;
+import com.example.SodokuBrainBackend.Puzzle.Puzzle;
+import com.example.SodokuBrainBackend.Puzzle.PuzzleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,6 +1,6 @@
-package com.example.SodokuBrainBackend.repository;
+package com.example.SodokuBrainBackend.Puzzle;
 
-import com.example.SodokuBrainBackend.model.Puzzle;
+import com.example.SodokuBrainBackend.Puzzle.Puzzle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

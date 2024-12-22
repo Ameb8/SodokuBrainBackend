@@ -1,4 +1,4 @@
-package com.example.SodokuBrainBackend.model;
+package com.example.SodokuBrainBackend.Users;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

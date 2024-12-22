@@ -1,7 +1,7 @@
-package com.example.SodokuBrainBackend.service;
+package com.example.SodokuBrainBackend.Puzzle;
 
-import com.example.SodokuBrainBackend.model.Puzzle;
-import com.example.SodokuBrainBackend.repository.PuzzleRepository;
+import com.example.SodokuBrainBackend.Puzzle.Puzzle;
+import com.example.SodokuBrainBackend.Puzzle.PuzzleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

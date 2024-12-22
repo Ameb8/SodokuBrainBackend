@@ -1,6 +1,6 @@
-package com.example.SodokuBrainBackend.repository;
+package com.example.SodokuBrainBackend.Users;
 
-import com.example.SodokuBrainBackend.model.Users;
+import com.example.SodokuBrainBackend.Users.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UsersRepository extends JpaRepository<Users, String> {
