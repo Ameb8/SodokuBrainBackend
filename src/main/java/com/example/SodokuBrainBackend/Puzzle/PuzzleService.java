@@ -1,5 +1,6 @@
 package com.example.SodokuBrainBackend.Puzzle;
 
+import com.example.SodokuBrainBackend.Puzzle.DTO.AttemptedPuzzleDTO;
 import com.example.SodokuBrainBackend.Puzzle.DTO.PuzzleDTO;
 import com.example.SodokuBrainBackend.Puzzle.DTO.SolvedPuzzleDTO;
 import jakarta.transaction.Transactional;
@@ -68,60 +69,31 @@ public class PuzzleService {
             //Integer ratingInt = Integer.valueOf(rating);
             Long puzzleIdLong = puzzleId.longValue();
 
-            SolvedPuzzleDTO solvedPuzzle = toSolvedPuzzleDTO(puzzleIdLong, puzzleVals, solutionVals, secondsToSolve, hintsUsed, rating, startedOn, solvedOn);
+            SolvedPuzzleDTO solvedPuzzle = new SolvedPuzzleDTO(puzzleIdLong, puzzleVals, solutionVals, secondsToSolve, hintsUsed, rating, startedOn, solvedOn);
             solvedPuzzles.add(solvedPuzzle);
         }
 
         return solvedPuzzles;
     }
 
-    private SolvedPuzzleDTO toSolvedPuzzleDTO(Long puzzleId, String puzzleVals, String solutionVals, int secondsToSolve, int hintsUsed, Byte rating, LocalDate startedOn, LocalDate solvedOn) {
-        return new SolvedPuzzleDTO(
-                puzzleId,
-                puzzleVals,
-                solutionVals,
-                secondsToSolve,
-                hintsUsed,
-                rating,
-                startedOn,
-                solvedOn
-        );
-    }
-}
+    public List<AttemptedPuzzleDTO> getAttemptedPuzzlesByUser(String username) {
+        List<Object[]> puzzleData = puzzleRepository.GetAttemptedPuzzles(username);
+        List<AttemptedPuzzleDTO> attemptedPuzzles = new ArrayList<>();
 
+        //Long puzzleId, String puzzleVals, String solutionVals, int secondsWorkedOn, int hintsUsed, LocalDate startedOn
 
+        for (Object[] data : puzzleData) {
+            Long puzzleId = Long.valueOf((Integer) data[0]);
+            String puzzleVals = (String) data[1];
+            String solutionVals = (String) data[2];
+            int secondsWorkedOn = (Integer) data[3];
+            int hintsUsed = (Integer) data[4];
+            LocalDate startedOn = ((java.sql.Date) data[6]).toLocalDate();
 
-
-
-
-
-
-
-
-
-
-/*
-    public PuzzleService(PuzzleRepository puzzleRepository) {
-        this.puzzleRepository = puzzleRepository;
-    }
-
-    public Puzzle uploadPuzzle(String puzzleVals) {
-        if(puzzleVals.length() != 81) {
-            throw new IllegalArgumentException();
+            AttemptedPuzzleDTO attemptedPuzzle = new AttemptedPuzzleDTO(puzzleId, puzzleVals, solutionVals, secondsWorkedOn, hintsUsed, startedOn);
+            attemptedPuzzles.add(attemptedPuzzle);
         }
 
-        Puzzle puzzle = new Puzzle();
-        puzzle.setPuzzleVals(puzzleVals);
-
-        return puzzleRepository.save(puzzle);
-    }
-
-    public Optional<Puzzle> getPuzzleById(Long id) {
-        return puzzleRepository.findById(id);
-    }
-
-    public Puzzle getRandomPuzzle() {
-        return puzzleRepository.findRandomPuzzle();
+        return attemptedPuzzles;
     }
 }
-*/
