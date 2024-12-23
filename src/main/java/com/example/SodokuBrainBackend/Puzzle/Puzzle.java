@@ -5,8 +5,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.UniqueConstraint;
-import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 public class Puzzle {
@@ -15,7 +13,7 @@ public class Puzzle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long puzzleId;
 
-    @Column(name = "puzzle_vals", length = 81, nullable = false)
+    @Column(name = "puzzle_vals", length = 81, nullable = false, unique = true)
     private String puzzleVals;
 
     @Column(name = "solution_vals", length = 81, nullable = false)
