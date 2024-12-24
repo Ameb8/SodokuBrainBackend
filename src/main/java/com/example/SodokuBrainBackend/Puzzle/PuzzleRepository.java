@@ -20,6 +20,6 @@ public interface PuzzleRepository  extends JpaRepository<Puzzle, Long> {
     @Procedure(name = "GetSolvedPuzzles")
     List<Object[]> GetSolvedPuzzles(@Param("username") String username);
 
-    //@Query(value = "SELECT * FROM puzzle ORDER BY RAND() LIMIT 1", nativeQuery = true)
-    //Puzzle findRandomPuzzle();
+    @Procedure(name = "GetAttemptedPuzzles")
+    List<Object[]> GetAttemptedPuzzles(@Param("username") String username);
 }

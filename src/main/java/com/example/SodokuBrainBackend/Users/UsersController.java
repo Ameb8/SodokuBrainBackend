@@ -1,5 +1,6 @@
 package com.example.SodokuBrainBackend.Users;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,10 +43,11 @@ public class UsersController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Delete a user by username
+    //delete user account
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
         usersService.deleteUserByUsername(username);
         return ResponseEntity.noContent().build();
     }
+
 }
