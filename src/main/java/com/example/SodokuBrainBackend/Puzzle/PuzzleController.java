@@ -2,6 +2,7 @@ package com.example.SodokuBrainBackend.Puzzle;
 
 import com.example.SodokuBrainBackend.Puzzle.DTO.AttemptedPuzzleDTO;
 import com.example.SodokuBrainBackend.Puzzle.DTO.PuzzleDTO;
+import com.example.SodokuBrainBackend.Puzzle.DTO.PuzzleMetricsDTO;
 import com.example.SodokuBrainBackend.Puzzle.DTO.SolvedPuzzleDTO;
 import com.example.SodokuBrainBackend.Puzzle.Puzzle;
 import com.example.SodokuBrainBackend.Puzzle.PuzzleService;
@@ -48,5 +49,12 @@ public class PuzzleController {
     @GetMapping("/attempted/{username}")
     public List<AttemptedPuzzleDTO> getAttemptedPuzzles(@PathVariable String username) {
         return puzzleService.getAttemptedPuzzlesByUser(username);
+    }
+
+    @GetMapping("/{id}/metrics")
+    public ResponseEntity<PuzzleMetricsDTO> getPuzzleMetrics(@PathVariable Long id) {
+        PuzzleMetricsDTO metrics = puzzleService.getPuzzleMetricsDTO(id);
+
+        return ResponseEntity.ok(metrics);
     }
 }

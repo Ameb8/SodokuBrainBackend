@@ -2,12 +2,14 @@ package com.example.SodokuBrainBackend.Puzzle;
 
 import com.example.SodokuBrainBackend.Puzzle.DTO.AttemptedPuzzleDTO;
 import com.example.SodokuBrainBackend.Puzzle.DTO.PuzzleDTO;
+import com.example.SodokuBrainBackend.Puzzle.DTO.PuzzleMetricsDTO;
 import com.example.SodokuBrainBackend.Puzzle.DTO.SolvedPuzzleDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +17,12 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+
 @Service
 public class PuzzleService {
     @Autowired
     private PuzzleRepository puzzleRepository;
+
 
     private PuzzleDTO toPuzzleDTO(Puzzle puzzle) {
         return new PuzzleDTO(puzzle.getPuzzleId(), puzzle.getPuzzleVals(), puzzle.getSolutionVals());
@@ -46,6 +50,7 @@ public class PuzzleService {
                 .map(this::toPuzzleDTO)
                 .collect(Collectors.toList());
     }
+
 
     //gets list of solved puzzles for a user
     @Transactional
@@ -84,7 +89,7 @@ public class PuzzleService {
         List<Object[]> puzzleData = puzzleRepository.GetAttemptedPuzzles(username);
         List<AttemptedPuzzleDTO> attemptedPuzzles = new ArrayList<>();
 
-        for (Object[] data : puzzleData) {
+        for(Object[] data : puzzleData) {
             Long puzzleId = Long.valueOf((Integer) data[0]);
             String puzzleVals = (String) data[1];
             String solutionVals = (String) data[2];
@@ -102,5 +107,52 @@ public class PuzzleService {
         }
 
         return attemptedPuzzles;
+    }
+
+/*
+
+
+
+ */
+    @Transactional
+    public PuzzleMetricsDTO getPuzzleMetricsDTO(Long id) {
+        //convert to PuzzleMetricsDTO
+        List<Object[]> metricsList = puzzleRepository.GetPuzzleMetrics(id);
+        Object[] metrics = metricsList.getFirst();
+        long numAttempted = ((BigDecimal) metrics[0]).longValue();
+        long numSolved = ((BigDecimal) metrics[1]).longValue();
+        double avgRating = ((BigDecimal) metrics[2]).doubleValue();
+        long numRated = ((BigDecimal) metrics[3]).longValue();
+        double avgSolveTime = ((BigDecimal) metrics[4]).doubleValue();
+        long timeWorkedOn = ((BigDecimal) metrics[5]).longValue();
+        double avgHintsUsed = ((BigDecimal) metrics[3]).doubleValue();
+        long totalHintsUsed = ((BigDecimal) metrics[3]).longValue();
+        Integer record = (Integer) metrics[8];
+        String recordHolder = (String) metrics[9];
+        java.sql.Date solvedOn = (java.sql.Date) metrics[10];
+
+        //handle null values
+        LocalDate recordDate = null;
+        if(record == null)
+            record = -1;
+        if(recordHolder == null)
+            recordHolder = "";
+        if(solvedOn != null)
+            recordDate = solvedOn.toLocalDate();
+
+        //instantiate PuzzleMetricsDTO
+        return new PuzzleMetricsDTO(
+                numAttempted,
+                numSolved,
+                avgRating,
+                numRated,
+                avgSolveTime,
+                timeWorkedOn,
+                avgHintsUsed,
+                totalHintsUsed,
+                record,
+                recordHolder,
+                recordDate
+        );
     }
 }

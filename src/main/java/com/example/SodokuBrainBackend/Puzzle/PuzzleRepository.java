@@ -1,6 +1,7 @@
 package com.example.SodokuBrainBackend.Puzzle;
 
 import com.example.SodokuBrainBackend.Puzzle.DTO.PuzzleDTO;
+import com.example.SodokuBrainBackend.Puzzle.DTO.PuzzleMetricsDTO;
 import com.example.SodokuBrainBackend.Puzzle.DTO.SolvedPuzzleDTO;
 import com.example.SodokuBrainBackend.Puzzle.Puzzle;
 import jakarta.transaction.Transactional;
@@ -22,4 +23,6 @@ public interface PuzzleRepository  extends JpaRepository<Puzzle, Long> {
 
     @Procedure(name = "GetAttemptedPuzzles")
     List<Object[]> GetAttemptedPuzzles(@Param("username") String username);
+    @Procedure(name = "GetPuzzleMetrics")
+    List<Object[]> GetPuzzleMetrics(@Param("puzzleId") Long puzzleId);
 }
