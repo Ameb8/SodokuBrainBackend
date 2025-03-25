@@ -4,7 +4,9 @@ import com.example.SodokuBrainBackend.Puzzle.Puzzle;
 import com.example.SodokuBrainBackend.Puzzle.PuzzleRepository;
 import com.example.SodokuBrainBackend.Users.Users;
 import com.example.SodokuBrainBackend.Users.UsersRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -43,16 +45,6 @@ public class UserPuzzleService {
         //check if puzzle exists
         Optional<Puzzle> puzzle = puzzleRepository.findById(userPuzzleId.getPuzzleId());
         Optional<Users> user = usersRepository.findById(userPuzzleId.getUsername());
-    /*
-        String error = "";
-        if(!puzzle.isPresent())
-            error += "404 ERROR: puzzle with id " + puzzleId + " does not exist";
-        if(!user.isPresent())
-            error += "/n404 ERROR: user with username " + username + " does not exist";
-
-        if(error.isEmpty())
-            return error;
-    */
 
         Attempted defaultPuzzle = new Attempted(
                 userPuzzleId,
@@ -67,7 +59,66 @@ public class UserPuzzleService {
         attemptedRepository.save(defaultPuzzle);
 
         return defaultPuzzle;
+    }
 
+    @Transactional
+    public UserPuzzle updateUserPuzzle(Attempted updatePuzzle) {
+        UserPuzzleId userPuzzleId = updatePuzzle.getId();
+        Optional<Solved> solvedOpt = solvedRepository.findById(userPuzzleId);
+
+        if(solvedOpt.isPresent())
+            return solvedOpt.get();
+
+        Optional<Attempted> attemptedOpt = attemptedRepository.findById(userPuzzleId);
+
+        if(attemptedOpt.isPresent()) {
+            Attempted attempt = attemptedOpt.get();
+            Attempted updatedPuzzle = updatePuzzle(attempt, updatePuzzle);
+
+            if(updatedPuzzle != null && isSolved(updatedPuzzle)) { //puzzle just solved
+                Solved newUpdate = new Solved(updatedPuzzle);
+                solvedRepository.save(newUpdate);
+                attemptedRepository.delete(attempt);
+                return newUpdate;
+            } else if(updatePuzzle != null && !isSolved(updatedPuzzle)) { //not yet solved
+                attemptedRepository.save(updatedPuzzle);
+                return updatePuzzle;
+            }
+        }
+
+        return null;
+    }
+
+    private Attempted updatePuzzle(Attempted userPuzzle, Attempted update) {
+        UserPuzzleId puzzleId = userPuzzle.getId();
+        Optional<Users> user = usersRepository.findById(puzzleId.getUsername());
+        Optional<Puzzle> puzzle = puzzleRepository.findById(puzzleId.getPuzzleId());
+
+        if(user.isPresent() && puzzle.isPresent()) {
+            return new Attempted( //return updated UserPuzzle
+                    puzzleId,
+                    user.get(),
+                    puzzle.get(),
+                    update.getCurrentState(),
+                    userPuzzle.getSecondsWorkedOn() + update.getSecondsWorkedOn(),
+                    userPuzzle.getHintsUsed() + update.getHintsUsed(),
+                    userPuzzle.getStartedOn()
+            );
+        }
+
+        return null; //puzzle or user doesn't exist
+    }
+
+    private boolean isSolved(Attempted updates) {
+        Optional<Puzzle> optPuzzle = puzzleRepository.findById(updates.getId().getPuzzleId());
+
+        if(optPuzzle.isPresent()) {
+            Puzzle puzzle = optPuzzle.get();
+
+            return puzzle.getSolutionVals().equals(updates.getCurrentState());
+        }
+
+        return false;
     }
 /*
     public UserPuzzle updatePuzzle(UserPuzzle userPuzzle) {

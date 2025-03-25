@@ -71,6 +71,12 @@ public class UsersController {
         return usersService.getLeaderboard(pageOffset, pageSize);
     }
 
+    /*
+    @GetMapping("/secured/rank/{user}")
+    public Long getUserRank(@PathVariable Users user) {
+
+    }*/
+
     @GetMapping("/numUsers")
     public long getNumUsers() {
         return usersService.getNumUsers();

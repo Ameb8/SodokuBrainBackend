@@ -13,16 +13,18 @@ public class UserPuzzleController {
         this.userPuzzleService = userPuzzleService;
     }
 
-    @GetMapping("/{puzzleId}/{username}")
+    @GetMapping("/secure/{puzzleId}/{username}")
     public ResponseEntity<UserPuzzle> getUserPuzzle(@PathVariable long puzzleId, @PathVariable String username) {
         return ResponseEntity.ok(userPuzzleService.getUserPuzzle(puzzleId, username));
     }
 
-    /*@PutMapping("/user")
-    public ResponseEntity<String> updateUserPuzzle(@RequestBody UserPuzzle userPuzzle) {
-        userPuzzleService.updatePuzzle(userPuzzle);
-        return ResponseEntity.ok("User puzzle updated successfully!");
-    }
+    @PutMapping("/secure/update")
+    public ResponseEntity<UserPuzzle> updateUserPuzzle(@RequestBody Attempted updatedPuzzle) {
+        UserPuzzle result = userPuzzleService.updateUserPuzzle(updatedPuzzle);
 
-     */
+        if (result != null)
+            return ResponseEntity.ok(result);
+
+        return ResponseEntity.notFound().build();
+    }
 }
