@@ -33,18 +33,25 @@ public class UsersService {
         return usersRepository.findAll();
     }
 
-    public Optional<Users> getUserByUsername(String username) {
+    /*public Optional<Users> getUserByUsername(String username) {
         return usersRepository.findById(username);
-    }
+    }*/
 
     public Optional<Users> getUserByEmail(String email) {
         return Optional.ofNullable(usersRepository.findByEmail(email));
     }
 
-    public void deleteUserByUsername(String username) {
+    /*public void deleteUserByUsername(String username) {
         usersRepository.deleteById(username);
-    }
+    }*/
 
+    /**
+     * Gets metrics for User Leaderboard based off page size and offset
+     *
+     * @param pageOffset page number to be retrieved
+     * @param pageSize page size to be viewed
+     * @return List of LeaderboardDTO objects
+     */
     @Transactional
     public List<LeaderboardDTO> getLeaderboard(long pageOffset, int pageSize) {
         List<Object[]> leaders = usersRepository.GetLeaderboard(pageOffset * pageSize, pageSize);
@@ -62,6 +69,11 @@ public class UsersService {
         return leaderboard;
     }
 
+    /**
+     * Gets number of users
+     *
+     * @return Number of users
+     */
     @Transactional
     public long getNumUsers() {
         List<Object[]> users = usersRepository.GetNumUsers();

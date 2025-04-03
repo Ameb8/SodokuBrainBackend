@@ -13,8 +13,8 @@ public class UserPuzzle implements Serializable {
     private UserPuzzleId id;
 
     @ManyToOne
-    @MapsId("username")
-    @JoinColumn(name = "username")
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
     private Users user;
 
     @ManyToOne

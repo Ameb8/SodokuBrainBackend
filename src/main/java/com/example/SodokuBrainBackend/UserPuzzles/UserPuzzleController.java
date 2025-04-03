@@ -13,11 +13,24 @@ public class UserPuzzleController {
         this.userPuzzleService = userPuzzleService;
     }
 
-    @GetMapping("/secure/{puzzleId}/{username}")
-    public ResponseEntity<UserPuzzle> getUserPuzzle(@PathVariable long puzzleId, @PathVariable String username) {
-        return ResponseEntity.ok(userPuzzleService.getUserPuzzle(puzzleId, username));
+    /**
+     * Endpoint to retrieve user progress for specific puzzle
+     *
+     * @param puzzleId Id of puzzle
+     * @param userId Unique username
+     * @return UserPuzzle object
+     */
+    @GetMapping("/secured/userpuzzle{puzzleId}")
+    public ResponseEntity<UserPuzzle> getUserPuzzle(@PathVariable long puzzleId) {
+        return ResponseEntity.ok(userPuzzleService.getUserPuzzle(puzzleId));
     }
 
+    /**
+     * Updates user progress for specified puzzle
+     *
+     * @param updatedPuzzle Updated values for specified puzzle
+     * @return Response entity
+     */
     @PutMapping("/secure/update")
     public ResponseEntity<UserPuzzle> updateUserPuzzle(@RequestBody Attempted updatedPuzzle) {
         UserPuzzle result = userPuzzleService.updateUserPuzzle(updatedPuzzle);

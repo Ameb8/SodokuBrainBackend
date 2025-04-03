@@ -14,6 +14,12 @@ public class SecurityConfig {
         this.customOAuth2UserService = customOAuth2UserService;
     }
 
+    /**
+     * Handles login authentication for users
+     * @param http Http Authentication request
+     * @return SecurityFilterChain
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -27,10 +33,10 @@ public class SecurityConfig {
                                         userInfoEndpoint.userService(customOAuth2UserService)
                                 )
                                 .successHandler((request, response, authentication) -> {
-                                    response.sendRedirect("http://localhost:5173"); // Change to your frontend URL
+                                    response.sendRedirect("http://localhost:5173");
                                 })
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/")); // Ensure logout redirects to a proper page
+                .logout(logout -> logout.logoutSuccessUrl("/"));
 
 
 

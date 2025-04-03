@@ -27,6 +27,12 @@ public class UsersController {
         return ResponseEntity.ok(savedUser);
     }
 
+    /**
+     * Gets user info for logged in users
+     *
+     * @param principal OAuth2 user info
+     * @returnUser information
+     */
     @GetMapping("/secured/me")
     public ResponseEntity<Users> getLoggedInUserInfo(@AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
@@ -40,31 +46,51 @@ public class UsersController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Get all users
+    /**
+     * Gets all users in database
+     *
+     * @return List of all users
+     */
     @GetMapping
     public ResponseEntity<List<Users>> getAllUsers() {
         return ResponseEntity.ok(usersService.getAllUsers());
     }
 
-    // Get a user by username
+    /**
+     * Gets user with passed username
+     *
+     * @param username Unique username
+     * @return Users object of account with username
+     *
     @GetMapping("/secured/{username}")
     public ResponseEntity<Optional<Users>> getUserByUsername(@PathVariable String username) {
         return ResponseEntity.ok(usersService.getUserByUsername(username));
-    }
+    }*/
 
-    @GetMapping("/email/{email}")
+    /**
+     * Gets user with passed email
+     *
+     * @param email Unique email
+     * @return Users object of account with email
+     */
+    @GetMapping("/secured/email/{email}")
     public ResponseEntity<Users> getUserByEmail(@PathVariable String email) {
         Optional<Users> user = usersService.getUserByEmail(email);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //delete user account
-    @DeleteMapping("/{username}")
+    /**
+     * Deletes account with given username
+     *
+     * @param user Unique username of account to be deleted
+     * @return
+     *
+    @DeleteMapping("/secured/{username}")
     public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
         usersService.deleteUserByUsername(username);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
     @GetMapping("/leaderboard/{pageOffset}/{pageSize}")
     public List<LeaderboardDTO> getLeaderboard(@PathVariable long pageOffset, @PathVariable int pageSize) {
@@ -77,6 +103,11 @@ public class UsersController {
 
     }*/
 
+    /**
+     * Endpoint to retreive total number of users
+     *
+     * @return Number of users
+     */
     @GetMapping("/numUsers")
     public long getNumUsers() {
         return usersService.getNumUsers();

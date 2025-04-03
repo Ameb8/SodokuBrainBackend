@@ -7,6 +7,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    /**
+     * Allows Endpoint request form frontend
+     * @param registry  CorsRegistry for mapping
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Apply to all endpoints

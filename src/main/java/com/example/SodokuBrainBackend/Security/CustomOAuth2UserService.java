@@ -17,6 +17,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private UsersRepository userRepository;
 
+    /**
+     * Loads user from Google and saves to project database
+     *
+     * @param userRequest Authentication request
+     * @return CustomOAuth2USer object
+     * @throws OAuth2AuthenticationException
+     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oauth2User = super.loadUser(userRequest);
@@ -45,6 +52,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return new CustomOAuth2User(oauth2User);
     }
 
+    /**
+     * Generates initial username for new accounts based off authentication data
+     * @param googleName Name associated with Google authorization
+     * @param email Google's registered email name for user
+     * @return Unique default username for new account
+     */
     private String generateUniqueUsername(String googleName, String email) {
         String baseUsername = (googleName != null) ? googleName.replaceAll("\\s+", "").toLowerCase() :
                 email.split("@")[0].toLowerCase();

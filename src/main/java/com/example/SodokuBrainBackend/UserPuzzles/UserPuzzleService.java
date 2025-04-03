@@ -2,11 +2,14 @@ package com.example.SodokuBrainBackend.UserPuzzles;
 
 import com.example.SodokuBrainBackend.Puzzle.Puzzle;
 import com.example.SodokuBrainBackend.Puzzle.PuzzleRepository;
+import com.example.SodokuBrainBackend.Security.CustomOAuth2User;
 import com.example.SodokuBrainBackend.Users.Users;
 import com.example.SodokuBrainBackend.Users.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,8 +30,27 @@ public class UserPuzzleService {
         this.usersRepository = usersRepository;
     }
 
-    public UserPuzzle getUserPuzzle(long puzzleId, String username) {
-        UserPuzzleId userPuzzleId = new UserPuzzleId(username, puzzleId);
+    /**
+     * Gets Puzzle progress from specific user
+     * Creates default Attempted object if does not exist
+     *
+     * @param puzzleId ID of puzzle to search for
+     * @return UserPuzzle object holding user progress
+     */
+    public UserPuzzle getUserPuzzle(long puzzleId) {
+        //get authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+        String authId = oauthUser.getAuthId();
+        Optional<Users> optUser = usersRepository.findByAuthId(authId);
+
+        if(optUser.isEmpty())
+            return null;
+
+        Users user = optUser.get();
+
+
+        UserPuzzleId userPuzzleId = new UserPuzzleId(user.getUserId(), puzzleId);
 
         //check in Attempted table
         Optional<Attempted> attempted = attemptedRepository.findById(userPuzzleId);
@@ -44,11 +66,10 @@ public class UserPuzzleService {
 
         //check if puzzle exists
         Optional<Puzzle> puzzle = puzzleRepository.findById(userPuzzleId.getPuzzleId());
-        Optional<Users> user = usersRepository.findById(userPuzzleId.getUsername());
 
         Attempted defaultPuzzle = new Attempted(
                 userPuzzleId,
-                user.get(),
+                user,
                 puzzle.get(),
                 puzzle.get().getPuzzleVals(),
                 0,
@@ -61,6 +82,12 @@ public class UserPuzzleService {
         return defaultPuzzle;
     }
 
+    /**
+     * Updates User's puzzle progress
+     * Retains one UserPuzzle object in database
+     * @param updatePuzzle Holds updated progress
+     * @return Updated UserPuzzle object
+     */
     @Transactional
     public UserPuzzle updateUserPuzzle(Attempted updatePuzzle) {
         UserPuzzleId userPuzzleId = updatePuzzle.getId();
@@ -89,9 +116,15 @@ public class UserPuzzleService {
         return null;
     }
 
+    /**
+     * Updates passed object with new progress
+     * @param userPuzzle Current database object
+     * @param update Object holding new progress
+     * @return  Updated Attempted object
+     */
     private Attempted updatePuzzle(Attempted userPuzzle, Attempted update) {
         UserPuzzleId puzzleId = userPuzzle.getId();
-        Optional<Users> user = usersRepository.findById(puzzleId.getUsername());
+        Optional<Users> user = usersRepository.findById(puzzleId.getUserId());
         Optional<Puzzle> puzzle = puzzleRepository.findById(puzzleId.getPuzzleId());
 
         if(user.isPresent() && puzzle.isPresent()) {
@@ -109,6 +142,12 @@ public class UserPuzzleService {
         return null; //puzzle or user doesn't exist
     }
 
+    /**
+     * Determines if puzzle is solved
+     *
+     * @param updates User's updated progress
+     * @return True if puzzle solved
+     */
     private boolean isSolved(Attempted updates) {
         Optional<Puzzle> optPuzzle = puzzleRepository.findById(updates.getId().getPuzzleId());
 
@@ -120,40 +159,4 @@ public class UserPuzzleService {
 
         return false;
     }
-/*
-    public UserPuzzle updatePuzzle(UserPuzzle userPuzzle) {
-        //Optional<Attempted> lastVersion = attemptedRepository.findById(userPuzzle.getId());
-
-        if(userPuzzle.isSolved()) {
-            Optional<Attempted> lastVersion = attemptedRepository.findById(userPuzzle.getId());
-
-            if(lastVersion.isPresent()) {
-                UserPuzzle solved = lastVersion.get();
-                solved.updatePuzzle(userPuzzle);
-                //convert to Solved object, add current date as solvedOn
-
-                //save solved object to solved
-                //return solved object
-            } else {
-                Optional<Solved> solved = solvedRepository.findById(userPuzzle.getId());
-                //adjust rating on solved to match userPuzzle
-                //save userPuzzle to Solved
-                //return userPuzzle
-            }
-        } else {
-            Optional<Attempted> lastVersion = attemptedRepository.findById(userPuzzle.getId())
-
-            if(!lastVersion.isPresent())
-                return null;
-
-            Attempted last = lastVersion.get();
-            last.updatePuzzle(userPuzzle);
-            attemptedRepository.save(last);
-
-        }
-
-
-    }
-
- */
 }

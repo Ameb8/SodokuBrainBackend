@@ -13,13 +13,22 @@ public class PuzzleController {
     @Autowired
     private PuzzleService puzzleService;
 
-    // Get all puzzles
+    /**
+     * Gets all created puzzles
+     *
+     * @return List of all puzzles
+     */
     @GetMapping
     public List<PuzzleDTO> getAllPuzzles() {
         return puzzleService.getAllPuzzles();
     }
 
-    // Get puzzle by ID
+    /**
+     * Gets puzzle with specified ID
+     *
+     * @param id Unique identifier of puzzle
+     * @return PuzzleDTO with passed ID
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PuzzleDTO> getPuzzleById(@PathVariable Long id) {
         return puzzleService.getPuzzleById(id)
@@ -27,7 +36,11 @@ public class PuzzleController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Get a random puzzle
+    /**
+     * Gets random puzzle
+     *
+     * @return Random PuzzleDTO Object
+     */
     @GetMapping("/random")
     public ResponseEntity<PuzzleDTO> getRandomPuzzle() {
         return puzzleService.getRandomPuzzle()
@@ -35,16 +48,34 @@ public class PuzzleController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/solved/{username}")
+    /**
+     * Retrieves list of all puzzle's solved by user
+     *
+     * @param username User's unique username
+     * @return List of PuzzleDTO object
+     */
+    @GetMapping("/secured/solved/{username}")
     public List<SolvedPuzzleDTO> getSolvedPuzzles(@PathVariable String username) {
         return puzzleService.getSolvedPuzzlesByUser(username);
     }
 
-    @GetMapping("/attempted/{username}")
+    /**
+     * Retrieves all puzzle attempted by specified user
+     *
+     * @param username User's unique username
+     * @return List of PuzzleDTO object
+     */
+    @GetMapping("/secured/attempted/{username}")
     public List<AttemptedPuzzleDTO> getAttemptedPuzzles(@PathVariable String username) {
         return puzzleService.getAttemptedPuzzlesByUser(username);
     }
 
+    /**
+     * Gets metrics for specified puzzle
+     *
+     * @param id Unique identifier for puzzle
+     * @return PuzzleMetricsDTO object for puzzle
+     */
     @GetMapping("/{id}/metrics")
     public ResponseEntity<PuzzleMetricsDTO> getPuzzleMetrics(@PathVariable Long id) {
         PuzzleMetricsDTO metrics = puzzleService.getPuzzleMetricsDTO(id);

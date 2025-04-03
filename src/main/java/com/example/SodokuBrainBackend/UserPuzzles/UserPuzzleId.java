@@ -6,23 +6,23 @@ import java.util.Objects;
 
 @Embeddable
 public class UserPuzzleId implements Serializable {
-    private String username;
+    private Long userId;
     private Long puzzleId;
 
-    public UserPuzzleId(String username, Long puzzleId) {
-        this.username = username;
+    public UserPuzzleId(Long userId, Long puzzleId) {
+        this.userId = userId;
         this.puzzleId = puzzleId;
     }
 
     public UserPuzzleId() {
     }
 
-    public String getUsername() {
-        return username;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getPuzzleId() {
@@ -33,6 +33,11 @@ public class UserPuzzleId implements Serializable {
         this.puzzleId = puzzleId;
     }
 
+    /**
+     * Equals override for UserPuzzleId Objects
+     * @param o Other object to compare
+     * @return True if objects equal,  otherwise false
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -41,11 +46,15 @@ public class UserPuzzleId implements Serializable {
             return false;
 
         UserPuzzleId that = (UserPuzzleId) o;
-        return Objects.equals(username, that.username) && Objects.equals(puzzleId, that.puzzleId);
+        return Objects.equals(userId, that.userId) && Objects.equals(puzzleId, that.puzzleId);
     }
 
+    /**
+     * Hashes UserPuzzleId object based on username and puzzleId
+     * @return Hashcode for UserPuzzleId object
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(username, puzzleId);
+        return Objects.hash(userId, puzzleId);
     }
 }

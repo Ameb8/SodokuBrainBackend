@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface UsersRepository extends JpaRepository<Users, String> {
+public interface UsersRepository extends JpaRepository<Users, Long> {
     Users findByEmail(String email);
+
+    Optional<Users> findByAuthId(String authId);
 
     @Procedure(name = "GetLeaders")
     List<Object[]> GetLeaderboard(@Param("page_offset") Long pageOffset, @Param("page_size") int pageSize);

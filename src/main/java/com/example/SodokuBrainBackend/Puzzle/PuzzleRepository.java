@@ -18,6 +18,12 @@ import java.util.List;
 
 @Repository
 public interface PuzzleRepository  extends JpaRepository<Puzzle, Long> {
+    /**
+     * Calls stored procedure to get all solved puzzle
+     *
+     * @param username Unique username for user
+     * @return List of array containing Puzzle's info
+     */
     @Procedure(name = "GetSolvedPuzzles")
     List<Object[]> GetSolvedPuzzles(@Param("username") String username);
 
