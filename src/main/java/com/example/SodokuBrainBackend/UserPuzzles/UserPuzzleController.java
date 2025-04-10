@@ -20,7 +20,7 @@ public class UserPuzzleController {
      * @param userId Unique username
      * @return UserPuzzle object
      */
-    @GetMapping("/secured/userpuzzle{puzzleId}")
+    @GetMapping("/secured/userpuzzle/{puzzleId}")
     public ResponseEntity<UserPuzzle> getUserPuzzle(@PathVariable long puzzleId) {
         return ResponseEntity.ok(userPuzzleService.getUserPuzzle(puzzleId));
     }
