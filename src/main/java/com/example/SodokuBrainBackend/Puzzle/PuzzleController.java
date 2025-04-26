@@ -18,6 +18,13 @@ public class PuzzleController {
     @Value("${api.key}")
     private String apiKey;
 
+    /**
+     * POST method for uploading puzzles to database
+     *
+     * @param providedKey API key required to upload
+     * @param puzzle to be uploaded
+     * @return response confirming success or failure
+     */
     @PostMapping
     public ResponseEntity<?> createPuzzle(
             @RequestHeader(value = "X-API-KEY", required = false) String providedKey,
@@ -99,16 +106,5 @@ public class PuzzleController {
         PuzzleMetricsDTO metrics = puzzleService.getPuzzleMetricsDTO(id);
 
         return ResponseEntity.ok(metrics);
-    }
-/*
-    @GetMapping("/{id}/{user}")
-    public PuzzleStateDTO getUserPuzzle(@PathVariable long id, @PathVariable String username){
-        return puzzleService.getUserPuzzle(id, username);
-    }
-*/
-    @PostMapping
-    public ResponseEntity<Puzzle> createPuzzle(@RequestBody Puzzle puzzle) {
-        Puzzle savedPuzzle = puzzleService.savePuzzle(puzzle);
-        return ResponseEntity.ok(savedPuzzle);
     }
 }
