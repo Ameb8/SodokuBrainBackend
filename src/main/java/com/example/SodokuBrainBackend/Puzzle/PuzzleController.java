@@ -2,6 +2,8 @@ package com.example.SodokuBrainBackend.Puzzle;
 
 import com.example.SodokuBrainBackend.Puzzle.DTO.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,29 @@ import java.util.List;
 public class PuzzleController {
     @Autowired
     private PuzzleService puzzleService;
+
+    @Value("${api.key}")
+    private String apiKey;
+
+    /**
+     * POST method for uploading puzzles to database
+     *
+     * @param providedKey API key required to upload
+     * @param puzzle to be uploaded
+     * @return response confirming success or failure
+     */
+    @PostMapping
+    public ResponseEntity<?> createPuzzle(
+            @RequestHeader(value = "X-API-KEY", required = false) String providedKey,
+            @RequestBody Puzzle puzzle) {
+
+        if (providedKey == null || !providedKey.equals(apiKey)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or missing API key");
+        }
+
+        Puzzle savedPuzzle = puzzleService.savePuzzle(puzzle);
+        return ResponseEntity.ok(savedPuzzle);
+    }
 
     /**
      * Gets all created puzzles
@@ -81,16 +106,5 @@ public class PuzzleController {
         PuzzleMetricsDTO metrics = puzzleService.getPuzzleMetricsDTO(id);
 
         return ResponseEntity.ok(metrics);
-    }
-/*
-    @GetMapping("/{id}/{user}")
-    public PuzzleStateDTO getUserPuzzle(@PathVariable long id, @PathVariable String username){
-        return puzzleService.getUserPuzzle(id, username);
-    }
-*/
-    @PostMapping
-    public ResponseEntity<Puzzle> createPuzzle(@RequestBody Puzzle puzzle) {
-        Puzzle savedPuzzle = puzzleService.savePuzzle(puzzle);
-        return ResponseEntity.ok(savedPuzzle);
     }
 }
