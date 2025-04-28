@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -116,6 +117,28 @@ public class UserPuzzleService {
         return null;
     }
 
+    public List<Attempted> getAttemptedByUser() {
+        Optional<Users> optUser = getAuthenticatedUser();
+
+        if(!optUser.isPresent())
+            return null;
+
+        Users user = optUser.get();
+
+        return attemptedRepository.findByUser(user);
+    }
+
+    public List<Solved> getSolvedByUser() {
+        Optional<Users> optUser = getAuthenticatedUser();
+
+        if(!optUser.isPresent())
+            return null;
+
+        Users user = optUser.get();
+
+        return solvedRepository.findByUser(user);
+    }
+
     /**
      * Updates passed object with new progress
      * @param userPuzzle Current database object
@@ -142,6 +165,27 @@ public class UserPuzzleService {
         return null; //puzzle or user doesn't exist
     }
 
+    public Solved ratePuzzle(Long puzzleId, Byte rating) {
+        Optional<Users> optUser = getAuthenticatedUser();
+
+        if(optUser.isEmpty())
+            return null;
+
+        Users user = optUser.get();
+        Long userId = user.getUserId();
+        UserPuzzleId id = new UserPuzzleId(puzzleId, userId);
+        Optional<Solved> optUpdate = solvedRepository.findById(id);
+
+        if(optUpdate.isEmpty())
+            return null;
+
+        Solved update = optUpdate.get();
+        update.setRating(rating);
+        solvedRepository.save(update);
+
+        return update;
+    }
+
     /**
      * Determines if puzzle is solved
      *
@@ -158,5 +202,17 @@ public class UserPuzzleService {
         }
 
         return false;
+    }
+
+    /**
+     * Gets Users object of currently authenticated account
+     *
+     * @return Users object
+     */
+    private Optional<Users> getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+        String authId = oauthUser.getAuthId();
+        return usersRepository.findByAuthId(authId);
     }
 }
