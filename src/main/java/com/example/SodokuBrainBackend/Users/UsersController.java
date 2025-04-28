@@ -83,7 +83,7 @@ public class UsersController {
     /**
      * Deletes account with given username
      *
-     * @param user Unique username of account to be deleted
+     * @param //user Unique username of account to be deleted
      * @return
      *
     @DeleteMapping("/secured/{username}")

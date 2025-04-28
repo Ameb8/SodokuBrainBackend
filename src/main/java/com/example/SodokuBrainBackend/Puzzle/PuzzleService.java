@@ -144,7 +144,7 @@ public class PuzzleService {
         //handle null values
         LocalDate recordDate = null;
         if(record == null)
-            record = -1;
+            record = 0;
         if(recordHolder == null)
             recordHolder = "";
         if(solvedOn != null)
