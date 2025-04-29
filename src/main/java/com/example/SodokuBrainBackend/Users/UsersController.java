@@ -80,6 +80,13 @@ public class UsersController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/secured/username/{username}")
+    public ResponseEntity<?> changeUsername(@PathVariable String username) {
+        return usersService.changeUsername(username)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to change username."));
+    }
+
     /**
      * Deletes account with given username
      *

@@ -2,12 +2,15 @@ package com.example.SodokuBrainBackend.Users;
 
 
 import com.example.SodokuBrainBackend.Puzzle.DTO.AttemptedPuzzleDTO;
+import com.example.SodokuBrainBackend.Security.CustomOAuth2User;
 import com.example.SodokuBrainBackend.Users.DTO.LeaderboardDTO;
 import com.example.SodokuBrainBackend.Users.Users;
 import com.example.SodokuBrainBackend.Users.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,6 +42,22 @@ public class UsersService {
 
     public Optional<Users> getUserByEmail(String email) {
         return Optional.ofNullable(usersRepository.findByEmail(email));
+    }
+
+    public Optional<Users> changeUsername(String username) {
+        Optional<Users> optUser = getAuthenticatedUser();
+
+        if(optUser.isEmpty())
+            return Optional.empty();
+
+        if (usersRepository.existsByUsername(username))
+            return Optional.empty(); // Username already exists
+
+        Users user = optUser.get();
+        user.setUsername(username);
+        usersRepository.save(user);
+
+        return Optional.of(user);
     }
 
     /*public void deleteUserByUsername(String username) {
@@ -80,5 +99,17 @@ public class UsersService {
         Object[] data = users.getFirst();
 
         return (long) data[0];
+    }
+
+    /**
+     * Gets Users object of currently authenticated account
+     *
+     * @return Users object
+     */
+    private Optional<Users> getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+        String authId = oauthUser.getAuthId();
+        return usersRepository.findByAuthId(authId);
     }
 }
